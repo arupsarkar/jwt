@@ -59,7 +59,8 @@ app.all('/proxy',  function(req, res) {
 
 app.get('/jwt', function (req,res){  
 
-	const sfdcUserName = req.query.jwtUserName;
+	//const sfdcUserName = req.query.jwtUserName;
+	const sfdcUserName = 'jgreene@bbclub.com';
 	const token = getJWTSignedToken_nJWTLib(sfdcUserName);
 	res.status(200).send(token);
 } );
