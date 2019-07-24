@@ -24,3 +24,4 @@ Then run `npm start`, or `nodemon Server.js (if installed previously)` it will s
 
 ### Step 6
 Navigate to `https://localhost:8081/` in your browser and you would see option for all **3 Auth flow - JWT, User Agent and Web Server**.
+# jwt

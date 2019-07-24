@@ -11,12 +11,12 @@ var express = require('express'),
 	nJwt = require('njwt'),  
 	apiVersion = 'v38.0',
 	domainName='localhost:8081',
-	jwt_consumer_key = '3MVG9szVa2RxsqBYmpkiG1QgjELvD9Z0NRvySRZKne.sBmUyKr9jPLaKWxAlFr3vvGGUGQskU3c.QPQyQuOel', 
-	consumer_secret='4390324792281178734',
-	jwt_aud = 'https://login.salesforce.com', 
+	jwt_consumer_key = '3MVG9zlTNB8o8BA2PtzwaJUnNakPLUdivQMfb_YlH.VTi3C8j2IDxh2ihNtHviGoMRLvv1Xrj0AB.HZDZX_wT',
+	consumer_secret='43F216B941D9CC25EE6762157696B143DBC2493D291DFEFAA04AB65EAF33800F',
+	jwt_aud = 'https://blackbuck-developer-edition.na59.force.com/bbcs',
 	callbackURL='https://localhost:8081/oauthcallback.html';
+//	jwt_aud = 'https://login.salesforce.com',
 
- 
 	app.set('view engine', 'ejs');
 
 app.use(express.static(__dirname + '/client')); 
@@ -35,19 +35,19 @@ function extractAccessToken(err, remoteResponse, remoteBody,res){
 		return res.status(500).end('Error'); 
 	}
 	console.log(remoteBody) ;
-	var sfdcResponse = JSON.parse(remoteBody); 
-	
+	var sfdcResponse = JSON.parse(remoteBody);
+
 	//success
-	if(sfdcResponse.access_token){				 
-		res.writeHead(302, {
-		  'Location': 'Main' ,
-		  'Set-Cookie': ['AccToken='+sfdcResponse.access_token,'APIVer='+apiVersion,'InstURL='+sfdcResponse.instance_url,'idURL='+sfdcResponse.id]
-		});
-	}else{
-		res.write('Some error occurred. Make sure connected app is approved previously if its JWT flow, Username and Password is correct if its Password flow. ');
-		res.write(' Salesforce Response : ');
-		res.write( remoteBody ); 
-	} 
+	// if(sfdcResponse.access_token){
+	// 	res.writeHead(302, {
+	// 	  'Location': 'Main' ,
+	// 	  'Set-Cookie': ['AccToken='+sfdcResponse.access_token,'APIVer='+apiVersion,'InstURL='+sfdcResponse.instance_url,'idURL='+sfdcResponse.id]
+	// 	});
+	// }else{
+	// 	res.write('Some error occurred. Make sure connected app is approved previously if its JWT flow, Username and Password is correct if its Password flow. ');
+	// 	res.write(' Salesforce Response : ');
+	// 	res.write( remoteBody );
+	// }
 	res.end();
 }
 
@@ -58,26 +58,10 @@ app.all('/proxy',  function(req, res) {
 });
 
 app.get('/jwt', function (req,res){  
-	var isSandbox = req.query.isSandbox;
-	var sfdcURL = 'https://login.salesforce.com/services/oauth2/token' ;
-	if(isSandbox == 'true'){
-		sfdcURL = 'https://test.salesforce.com/services/oauth2/token' ;
-	}
-	var sfdcUserName = req.query.jwtUserName;
-	var token = getJWTSignedToken_nJWTLib(sfdcUserName); 
-	  
-	var paramBody = 'grant_type='+base64url.escape('urn:ietf:params:oauth:grant-type:jwt-bearer')+'&assertion='+token ;	
-	var req_sfdcOpts = { 	url : sfdcURL,  
-							method:'POST', 
-							headers: { 'Content-Type' : 'application/x-www-form-urlencoded'} ,
-							body:paramBody 
-						};
-				
-	request(req_sfdcOpts, 
-		function(err, remoteResponse, remoteBody) {
-			extractAccessToken(err, remoteResponse, remoteBody, res); 
-		} 
-	); 
+
+	const sfdcUserName = req.query.jwtUserName;
+	const token = getJWTSignedToken_nJWTLib(sfdcUserName);
+	res.status(200).send(token);
 } );
 
 /**
